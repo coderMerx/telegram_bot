@@ -1,15 +1,25 @@
 from telegram import Update
 from telegram.ext import ApplicationBuilder, CommandHandler, ContextTypes
+from dotenv import load_dotenv
+import os
+
+# Load environment variables from .env file
+load_dotenv()
 
 # Define the /start command handler
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
-    await update.message.reply_text("7596323983:AAFY58EgQawxyWgICgyOicc-RIgKwiy9-WA")
+    await update.message.reply_text("Hello, World! Welcome to my Telegram bot!")
 
 # Main function to run the bot
 def main():
-    # Replace 'YOUR_API_TOKEN' with your bot's token
-    api_token = "YOUR_API_TOKEN"
-
+    # Load the API key from the environment variable
+    api_token = os.getenv("API_KEY")
+    
+    # Check if the API key is available
+    if not api_token:
+        print("Error: API_KEY is not set in the environment variables.")
+        return
+    
     # Create the Application (bot instance)
     application = ApplicationBuilder().token(api_token).build()
 
@@ -17,6 +27,7 @@ def main():
     application.add_handler(CommandHandler("start", start))
 
     # Start polling
+    print("Bot is running... Press Ctrl+C to stop.")
     application.run_polling()
 
 if __name__ == "__main__":
