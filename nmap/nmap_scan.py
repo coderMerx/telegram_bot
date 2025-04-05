@@ -2,7 +2,7 @@ import telebot
 import subprocess
 
 # Your bot token from BotFather
-BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'
+BOT_TOKEN = ''
 bot = telebot.TeleBot(BOT_TOKEN)
 
 # Replace with your own Telegram ID to limit access
