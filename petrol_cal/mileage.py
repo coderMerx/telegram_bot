@@ -1,35 +1,55 @@
 import telebot
 
-BOT_TOKEN = 'YOUR_BOT_TOKEN_HERE'
+BOT_TOKEN = ''
 bot = telebot.TeleBot(BOT_TOKEN)
+
+# Temporary storage for user input
+user_data = {}
 
 @bot.message_handler(commands=['start'])
 def start(message):
-    bot.reply_to(message, "Hi! Send me your data like this:\n\n/mileage km=120 price=105 petrol=2")
+    bot.reply_to(message, "👋 Hi! Let's calculate your trip cost.")
+    bot.send_message(message.chat.id, "🚗 Enter the mileage of the vehicle (km/L):")
+    bot.register_next_step_handler(message, ask_km)
 
-@bot.message_handler(commands=['mileage'])
-def mileage(message):
+def ask_km(message):
     try:
-        text = message.text.replace('/mileage', '').strip()
-        data = dict(item.split('=') for item in text.split())
+        user_data[message.chat.id] = {'mileage': float(message.text)}
+        bot.send_message(message.chat.id, "📏 Enter the number of kilometers traveled:")
+        bot.register_next_step_handler(message, ask_price)
+    except ValueError:
+        bot.send_message(message.chat.id, "❌ Please enter a valid number for mileage.")
+        bot.register_next_step_handler(message, ask_km)
 
-        km = float(data['km'])
-        price = float(data['price'])
-        petrol = float(data['petrol'])
+def ask_price(message):
+    try:
+        user_data[message.chat.id]['km'] = float(message.text)
+        bot.send_message(message.chat.id, "⛽ Enter today's petrol price (₹/L):")
+        bot.register_next_step_handler(message, calculate_cost)
+    except ValueError:
+        bot.send_message(message.chat.id, "❌ Please enter a valid number for kilometers.")
+        bot.register_next_step_handler(message, ask_price)
 
-        mileage = km / petrol
-        total_cost = petrol * price
+def calculate_cost(message):
+    try:
+        user_data[message.chat.id]['price'] = float(message.text)
+        data = user_data[message.chat.id]
+        
+        petrol_used = data['km'] / data['mileage']
+        total_cost = petrol_used * data['price']
 
         reply = (
-            f"🛵 Ride Summary:\n"
-            f"Distance: {km} km\n"
-            f"Petrol Used: {petrol} L\n"
-            f"Petrol Price: ₹{price}/L\n\n"
-            f"📊 Mileage: {mileage:.2f} km/L\n"
-            f"💸 Cost: ₹{total_cost:.2f}"
+            f"🛣️ Trip Summary:\n"
+            f"Mileage: {data['mileage']} km/L\n"
+            f"Distance: {data['km']} km\n"
+            f"Petrol Price: ₹{data['price']}/L\n\n"
+            f"⛽ Petrol Used: {petrol_used:.2f} L\n"
+            f"💸 Total Cost: ₹{total_cost:.2f}"
         )
-        bot.reply_to(message, reply)
-    except Exception as e:
-        bot.reply_to(message, "❌ Invalid input. Please use this format:\n/mileage km=120 price=105 petrol=2")
+        bot.send_message(message.chat.id, reply)
+        user_data.pop(message.chat.id)  # clean up
+    except ValueError:
+        bot.send_message(message.chat.id, "❌ Please enter a valid number for petrol price.")
+        bot.register_next_step_handler(message, calculate_cost)
 
 bot.polling()
