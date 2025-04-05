@@ -1,6 +1,6 @@
 import telebot
 
-TOKEN = "paste the token here"  # Replace with your actual bot token
+TOKEN = "Enter your token here"  # Replace with your actual bot token
 bot = telebot.TeleBot(TOKEN)
 
 user_data = {}
@@ -42,7 +42,7 @@ def save_data(message):
         file.write(f"Phone: {user_data[chat_id]['phone']}\n")
         file.write("=" * 30 + "\n")
 
-    bot.send_message(chat_id, "Thank you! Your information send to zoho.")
+    bot.send_message(chat_id, "Thank you! Your information send to company.")
     del user_data[chat_id]  # Clear stored data for privacy
 
 bot.polling()

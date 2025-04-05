@@ -1,6 +1,6 @@
 import telebot
 
-BOT_TOKEN = ''
+BOT_TOKEN = 'enter your token'
 bot = telebot.TeleBot(BOT_TOKEN)
 
 # Temporary storage for user input
