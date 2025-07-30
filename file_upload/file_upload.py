@@ -6,7 +6,7 @@ import os
 DOWNLOAD_FOLDER = "downloaded_files"
 os.makedirs(DOWNLOAD_FOLDER, exist_ok=True)
 
-BOT_TOKEN = "YOUR_BOT_TOKEN_HERE"  # Replace with your token
+BOT_TOKEN = "8071892128:AAGh0ntnXav92v8jyq0mZ2STTgVDzg_xd-I"  # Replace with your token
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("👋 Hi! Send me a file and I'll store it for you!")
